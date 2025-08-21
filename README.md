@@ -1,8 +1,9 @@
 # OUC-AutoLogin
 A tool that frees Ocean University of China students from the hassle of campus network disconnection.
 
-一个基于 **Python 多线程** 实现的校园网自动认证与远程控制工具。  
+一个基于 **Python 多线程** 实现的轻量级校园网自动认证与远程控制工具。  
 该程序会自动检测网络连接状态，在掉线时重新向校园网认证服务器发起 GET 请求登录。同时，它提供了一个远程控制端口（默认 8888），可接收远程命令（如 `exit`）来结束程序。
+**强烈建议使用多线程版本MulitThreadVersion!**
 
 ---
 
@@ -11,7 +12,7 @@ A tool that frees Ocean University of China students from the hassle of campus n
 - **网络状态检测**：定时检测是否可以访问互联网。  
 - **自动认证重连**：检测到断网时自动发起校园网登录请求。  
 - **日志输出**：所有事件会带时间戳打印，方便排查问题。  
-- **远程控制**：通过 TCP 连接到 `8888` 端口，可以远程发送 `exit` 指令来关闭程序。  
+- **远程控制**：通过 TCP 连接到 `8888` 端口，可以远程发送 `exit` 指令来关闭程序，并且会断开端口。  
 
 ---
 
@@ -41,9 +42,12 @@ A tool that frees Ocean University of China students from the hassle of campus n
 
 ```bash
 pip install requests
-
+```
 
 ## ⚙️ 使用方法
 
-- 替换WOOT成为你的学号、登陆密码
+- 替换WOOT成为你的学号、登陆密码，IP字段的WOOT不需要替换，有自动获取动态IP功能
 - 远程结束时可使用telnet或者nc命令
+```bash
+telnet 10.xx.xx.xx 8888 exit
+```
