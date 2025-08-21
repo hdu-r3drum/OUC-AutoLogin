@@ -41,3 +41,9 @@ A tool that frees Ocean University of China students from the hassle of campus n
 
 ```bash
 pip install requests
+
+
+## ⚙️ 使用方法
+
+- 替换WOOT成为你的学号、登陆密码
+- 远程结束时可使用telnet或者nc命令
