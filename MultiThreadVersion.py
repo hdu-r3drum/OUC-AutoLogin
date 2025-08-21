@@ -3,6 +3,7 @@ from requests.exceptions import RequestException
 import socket
 import threading
 import time
+import sys
 from datetime import datetime
 
 
@@ -13,6 +14,12 @@ user_account = "WOOT"
 user_password = "WOOT"
 ip_address = "WOOT"
 
+def disconnect():
+    ip_address = get_ipaddress()
+    url = "https://xha.ouc.edu.cn:802/eportal/portal/mac/unbind?callback=dr1005&user_account=" + user_account + "&wlan_user_mac=000000000000&wlan_user_ip=" + ip_address + "&jsVersion=4.1&v=9233&lang=zh"
+    get_request(url)
+    exit_flag = True
+
 def generate_url(ip):
     return "https://xha.ouc.edu.cn:802/eportal/portal/login?callback=dr1003&login_method=1&user_account=" + user_account + "&user_password=" + user_password + "&wlan_user_ip=" + ip + "&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=&jsVersion=4.1&terminal_type=1&lang=zh-c"
 
@@ -22,13 +29,16 @@ def print_log(message, state):
     
 
 def get_request(url):
-    
+    global exit_flag
     try:
         _ = requests.get(
             url
         )
-        print_log("认证成功！","+")
-        check_network()
+        if not exit_flag:
+            if check_network():
+                print_log("认证成功！","+")
+            else:
+                print_log("认证失败，请检查学号密码是否填写正确！","-")
     except RequestException as e:
         print_log(f"请求错误，认证失败：{e}","-")
     
@@ -64,8 +74,9 @@ def handle_client(conn, addr):
             data = conn.recv(1024).decode().strip()
             if data.lower() == "exit":
                 print_log("收到退出命令", "+")
-                conn.sendall(b"Bye!\n")
                 exit_flag = True
+                conn.sendall(b"Bye!\n")
+                disconnect()
             else:
                 conn.sendall(b"Unknow command!\n")
                 print_log(f"未知命令:{data}", "-")
