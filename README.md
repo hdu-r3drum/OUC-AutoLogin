@@ -51,3 +51,4 @@ pip install requests
 ```bash
 telnet 10.xx.xx.xx 8888 exit
 ```
+- 建议配合Windows\Linux\MacOS任务计划程序使用
