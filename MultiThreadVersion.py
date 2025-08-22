@@ -3,35 +3,8 @@ from requests.exceptions import RequestException
 import socket
 import threading
 import time
-import urllib3def handle_client(conn, addr):
-    global exit_flag
-    print_log(f"客户端{addr}已经连接，开始超时计时{time_out}秒", "+")
-    start_time = time.time()
-    buffer = ""
-    while not exit_flag:
-        try:
-            conn.settimeout(time_out)
-            data = conn.recv(1024).decode()
-            if not data:
-                break
-            buffer += data
-            if "\n" in buffer or "\r" in buffer:
-                line = buffer.strip()
-                if line.lower() == "exit":
-                    print_log("收到退出命令", "+")
-                    exit_flag = True
-                    conn.sendall(b"Bye!\n")
-                    disconnect()
-                else:
-                    conn.sendall(b"Unknow command!\n")
-                    print_log(f"未知命令:{line}", "-")
-                break
-        except socket.timeout as e:
-            print_log(f"命令接收超时：{e}", "-")
-            conn.sendall(b"Input command timeout\n")
-            break
-    conn.close()
-from datetime import datetime
+import urllib3
+
 
 
 exit_flag = False
@@ -123,6 +96,35 @@ def handle_client(conn, addr):
             break
     conn.close()
 
+def handle_client(conn, addr):
+    global exit_flag
+    print_log(f"客户端{addr}已经连接，开始超时计时{time_out}秒", "+")
+    start_time = time.time()
+    buffer = ""
+    while not exit_flag:
+        try:
+            conn.settimeout(time_out)
+            data = conn.recv(1024).decode()
+            if not data:
+                break
+            buffer += data
+            if "\n" in buffer or "\r" in buffer:
+                line = buffer.strip()
+                if line.lower() == "exit":
+                    print_log("收到退出命令", "+")
+                    exit_flag = True
+                    conn.sendall(b"Bye!\n")
+                    disconnect()
+                else:
+                    conn.sendall(b"Unknow command!\n")
+                    print_log(f"未知命令:{line}", "-")
+                break
+        except socket.timeout as e:
+            print_log(f"命令接收超时：{e}", "-")
+            conn.sendall(b"Input command timeout\n")
+            break
+    conn.close()
+from datetime import datetime
 def remote_control(port=8888):
     global exit_flag
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
