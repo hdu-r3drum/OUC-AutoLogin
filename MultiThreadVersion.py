@@ -3,7 +3,7 @@ from requests.exceptions import RequestException
 import socket
 import threading
 import time
-import sys
+import urllib3
 from datetime import datetime
 
 
@@ -13,12 +13,12 @@ check_frequency = 10
 user_account = "WOOT"
 user_password = "WOOT"
 ip_address = "WOOT"
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def disconnect():
     ip_address = get_ipaddress()
     url = "https://xha.ouc.edu.cn:802/eportal/portal/mac/unbind?callback=dr1005&user_account=" + user_account + "&wlan_user_mac=000000000000&wlan_user_ip=" + ip_address + "&jsVersion=4.1&v=9233&lang=zh"
     get_request(url)
-    exit_flag = True
 
 def generate_url(ip):
     return "https://xha.ouc.edu.cn:802/eportal/portal/login?callback=dr1003&login_method=1&user_account=" + user_account + "&user_password=" + user_password + "&wlan_user_ip=" + ip + "&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=&jsVersion=4.1&terminal_type=1&lang=zh-c"
@@ -32,7 +32,10 @@ def get_request(url):
     global exit_flag
     try:
         _ = requests.get(
-            url
+            url,
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=5,
+            verify = False
         )
         if not exit_flag:
             if check_network():
